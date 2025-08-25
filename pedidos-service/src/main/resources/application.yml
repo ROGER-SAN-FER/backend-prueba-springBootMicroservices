@@ -1,0 +1,61 @@
+server:
+  port: 8083  # Puerto exclusivo para este microservicio
+spring:
+  application:
+    name: pedidos-service
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true   # ? ESTA ES LA QUE TE FALTA
+
+# Timeouts Feign (cliente HTTP subyacente)
+feign:                        # Configuración de Feign (cliente declarativo de HTTP)
+  circuitbreaker:
+    enabled: true
+  client:
+    config:
+      productos-service:       # Nombre del cliente (debe coincidir con el "name" de @FeignClient)
+        connectTimeout: 2000   # Tiempo máximo (ms) para establecer conexión con el servidor
+        readTimeout: 2000      # Tiempo máximo (ms) para esperar la respuesta del servidor
+        loggerLevel: full     # Nivel de log de Feign (basic = muestra metodo HTTP, URL, estado y tiempo)
+logging:
+  level:
+    io.github.openfeign: DEBUG
+
+# Resilience4j: CB + Retry + Bulkhead para la llamada a productos
+resilience4j:                 # Configuración de Resilience4j (tolerancia a fallos)
+  circuitbreaker:             # Sección de Circuit Breaker (corta llamadas cuando hay fallos)
+    instances:                        # Declaración de instancias (uno por cada cliente)
+      productosClient:                # Nombre de la instancia (usado en @CircuitBreaker(name="productosClient"))
+        slidingWindowType: COUNT_BASED   # Ventana de evaluación basada en número de llamadas (no en tiempo)
+        slidingWindowSize: 10            # Número de llamadas consideradas en la ventana
+        minimumNumberOfCalls: 4          # Mínimo de llamadas necesarias antes de calcular métricas
+        failureRateThreshold: 50         # Porcentaje de fallos permitido (si >=50%, se abre el circuito)
+        slowCallDurationThreshold: 2s    # Una llamada que tarde más de 2 segundos se considera "lenta"
+        slowCallRateThreshold: 50        # % de llamadas lentas permitido (si >=50%, también se abre el circuito)
+        waitDurationInOpenState: 10s     # Tiempo que el circuito permanece "abierto" antes de pasar a half-open
+        permittedNumberOfCallsInHalfOpenState: 3 # Número de llamadas de prueba permitidas en half-open
+        automaticTransitionFromOpenToHalfOpenEnabled: true # Transición automática de OPEN a HALF-OPEN tras el tiempo
+        recordExceptions:                # Lista de excepciones que cuentan como fallo
+          - java.net.ConnectException        # Error de conexión ? cuenta como fallo
+          - java.net.SocketTimeoutException  # Timeout en la comunicación ? cuenta como fallo
+        ignoreExceptions:                # Lista de excepciones que NO cuentan como fallo
+          #tuapp.excepciones.NegocioException # Excepción de negocio propia, no afecta al circuito
+  retry:                                # Configuración de reintentos (Retry) en Resilience4j
+    instances:                          # Definición de instancias de retry
+      productosClient:                  # Nombre de la instancia (usado en @Retry(name="productosClient"))
+        maxAttempts: 2                  # Número máximo de intentos ? 1 llamada inicial + 1 reintento extra
+        waitDuration: 200ms             # Tiempo de espera entre cada intento
+        retryExceptions:                # Lista de excepciones que disparan un reintento
+          - java.net.SocketTimeoutException  # Si ocurre un timeout, se reintenta
+          - java.io.IOException              # Si ocurre un error de I/O, se reintenta
+  bulkhead:                   # Configuración de Bulkhead (limita concurrencia)
+    instances:
+      productosClient:
+        maxConcurrentCalls: 10 # Máximo de llamadas concurrentes permitidas al mismo tiempo
+        maxWaitDuration: 0     # Tiempo máximo que una llamada puede esperar si el bulkhead está lleno (0 = no espera)
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

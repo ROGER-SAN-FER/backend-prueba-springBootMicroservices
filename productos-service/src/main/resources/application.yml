@@ -1,0 +1,10 @@
+server:
+  port: 8082  # Puerto exclusivo para este microservicio
+spring:
+  application:
+    name: productos-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

@@ -1,0 +1,5 @@
+server:
+  port: 8081  # Puerto exclusivo para este microservicio
+spring:
+  application:
+    name: usuarios-service
