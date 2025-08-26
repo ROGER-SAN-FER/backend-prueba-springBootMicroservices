@@ -4,6 +4,7 @@ import com.prueba.authservice.features.audit.handler.AuditAccessDeniedHandler;
 import com.prueba.authservice.features.audit.handler.AuditAuthenticationEntryPoint;
 import com.prueba.authservice.features.auth.filter.JwtAuthenticationFilter;
 import com.prueba.authservice.features.oauth2.handler.OAuth2AuthenticationSuccessHandler;
+import com.prueba.authservice.features.oauth2.handler.OAuth2LoginFailureHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
     private final OAuth2AuthenticationSuccessHandler successHandler;
+    private final OAuth2LoginFailureHandler failureHandler;
     // inyecta:
     private final AuditAccessDeniedHandler auditDeniedHandler;
     private final AuditAuthenticationEntryPoint auditEntryPoint;
@@ -107,7 +109,7 @@ public class SecurityConfig {
                         .requestMatchers("/me").authenticated()
                         .anyRequest().permitAll()
                 )
-                .oauth2Login(oauth -> oauth.successHandler(successHandler))
+                .oauth2Login(oauth -> oauth.successHandler(successHandler).failureHandler(failureHandler))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         // OJO: NO añadir jwtFilter aquí
