@@ -4,6 +4,13 @@ spring:
   application:
     name: productos-service
 
+  # El Gateway valida JWT con la CLAVE PÚBLICA (monta el mismo public.pem aquí)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: file:${PUBLIC_KEY}
+
 eureka:
   client:
     service-url:
