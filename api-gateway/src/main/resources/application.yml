@@ -1,0 +1,78 @@
+server:
+  port: 8080 # El API Gateway se levanta en el puerto 8080
+
+spring:
+  application:
+    name: api-gateway # Nombre lógico del microservicio (como se verá en Eureka)
+
+## Seguridad en el Gateway (si validas JWT aquí)
+#spring:
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt: # Config de validación de JWT en el Gateway
+#          # Opción A: usar jwk-set-uri de tu IdP (Keycloak, Auth0, Cognito, etc.)
+#          jwk-set-uri: http://localhost:8081/realms/demo/protocol/openid-connect/certs
+#          # Opción B (en lugar de jwk-set-uri): configurar issuer-uri si tu IdP lo soporta
+#          # issuer-uri: http://localhost:8081/realms/demo
+
+  cloud:
+    gateway:
+      default-filters: # Filtros aplicados a TODAS las rutas del Gateway
+        - AddResponseHeader=X-Gateway, SpringCloudGateway # Añade un header en cada respuesta
+      globalcors: # Configuración global de CORS (qué orígenes pueden consumir la API)
+        corsConfigurations:
+          "[/**]": # Aplica a todas las rutas /**
+            allowedOrigins: "*" # Permite cualquier origen
+            allowedMethods: "*" # Permite cualquier metodo (GET, POST, PUT, DELETE?)
+            allowedHeaders: "*" # Permite cualquier cabecera
+            exposedHeaders: # Cabeceras que el navegador puede leer de la respuesta
+              - Authorization
+              - Location
+            allowCredentials: false #No se permite enviar cookies o credenciales cross-site
+
+      routes: # Definición de rutas en el Gateway
+        # === Ruta a PRODUCTOS-SERVICE ===
+        - id: productos-route # Identificador interno de la ruta
+          uri: lb://PRODUCTOS-SERVICE  # lb:// usa el Discovery Client (Eureka) + balanceo de carga
+          predicates: # Condiciones que debe cumplir la request para redirigirse aquí
+            - Path=/productos/**         # Solo las rutas que empiecen con /productos/
+            - Method=GET,POST            # Solo si el metodo es GET o POST
+          filters: # Filtros aplicados a ESTA ruta
+            - StripPrefix=0              # No elimina prefijos de la URL entrante/ no recorta prefijos (ajústalo si usas /api/**)
+            - AddRequestHeader=X-From, api-gateway # Añade header a la request enviada al servicio
+            # ejemplo de rewrite: /api/productos/** -> /productos/**
+            # - RewritePath=/api/(?<segment>.*), /${segment}
+
+        # === Ruta a PEDIDOS-SERVICE ===
+        - id: pedidos-route
+          uri: lb://PEDIDOS-SERVICE
+          predicates:
+            - Path=/pedidos/**
+
+    # Si añades circuit breaker en el gateway, puedes activar un fallback (opcional):
+    # gateway:
+    #   routes:
+    #     - id: productos-cb
+    #       uri: lb://PRODUCTOS-SERVICE
+    #       predicates:
+    #         - Path=/safe-productos/** # Si falla esta ruta...
+    #       filters:
+    #         - name: CircuitBreaker # ...se aplica patrón de circuit breaker
+    #           args:
+    #             name: productosCb
+    #             fallbackUri: forward:/fallback/productos # Redirige al endpoint fallback
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ # URL del servidor Eureka
+  instance:
+    prefer-ip-address: true # Registra el microservicio con su IP, no con hostname
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway # Expone vía Actuator: health (salud), info, y estado del gateway
