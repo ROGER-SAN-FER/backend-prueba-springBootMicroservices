@@ -33,7 +33,6 @@ public class AuthController {
     private final JwtService jwt;
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepo;
-
     private final AuditService audit;
     private final LoginThrottleService throttle;
 
