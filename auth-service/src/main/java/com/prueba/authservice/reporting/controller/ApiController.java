@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/public")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class ApiController {
 
@@ -15,11 +15,6 @@ public class ApiController {
     @GetMapping("/secure")
     String secure(Authentication auth){
         return "Hello API, user=" + auth.getName();
-    }
-
-    @GetMapping("/public/ping")
-    public String publicPing() {
-        return "pong público (API)";
     }
 
     @CrossOrigin(

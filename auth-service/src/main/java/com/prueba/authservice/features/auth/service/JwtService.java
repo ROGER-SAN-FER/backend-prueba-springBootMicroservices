@@ -93,5 +93,9 @@ public class JwtService {
     public Instant extractExpirationInstant(String token) {
         return extractExpiration(token).toInstant();
     }
+
+    public Instant refreshExpiresAtFromNow() {
+        return Instant.now().plusSeconds(refreshSeconds);
+    }
 }
 
