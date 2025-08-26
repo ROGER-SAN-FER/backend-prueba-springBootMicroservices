@@ -42,7 +42,7 @@ spring:
         - id: auth-api
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/api/auth/**,/api/public/**,/api/reports/**
+            - Path=/api/auth/**,/api/public/**,/api/reports/**,/api/user/**
 
         # === Ruta a PRODUCTOS-SERVICE ===
         - id: productos-route # Identificador interno de la ruta
