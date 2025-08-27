@@ -1,6 +1,6 @@
 package com.prueba.pedidosservice.client;
 
-import com.prueba.productosservice.dto.ProductDto;
+import com.prueba.pedidosservice.dto.ProductDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

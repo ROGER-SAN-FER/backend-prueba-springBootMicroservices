@@ -2,7 +2,8 @@ package com.prueba.pedidosservice.service;
 
 import com.prueba.pedidosservice.client.ProductosClient;
 import com.prueba.pedidosservice.dto.PedidoView;
-import com.prueba.productosservice.dto.ProductDto;
+
+import com.prueba.pedidosservice.dto.ProductDto;
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;

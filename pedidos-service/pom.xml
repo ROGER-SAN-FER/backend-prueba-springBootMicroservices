@@ -29,12 +29,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- REST + validación -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
         <!-- OpenFeign declarativo -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
