@@ -1,0 +1,18 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@github.com:ROGER-SAN-FER/config-repo.git
+          default-label: main
+          username: ${GIT_USERNAME}       # o tu email de GitHub
+          password: ${GIT_TOKEN}          # token personal de GitHub
+
+management:
+  endpoints.web.exposure.include: health,info
