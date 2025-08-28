@@ -1,17 +1,13 @@
-server:
-  port: 8082  # Puerto exclusivo para este microservicio
 spring:
   application:
     name: productos-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
 
-  # El Gateway valida JWT con la CLAVE PÚBLICA (monta el mismo public.pem aquí)
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          public-key-location: file:${PUBLIC_KEY}
+spring.cloud.config.label: master   # <- que coincida con el server
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,refresh"

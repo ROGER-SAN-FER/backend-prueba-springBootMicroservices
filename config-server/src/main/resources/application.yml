@@ -9,10 +9,18 @@ spring:
     config:
       server:
         git:
-          uri: git@github.com:ROGER-SAN-FER/config-repo.git
-          default-label: main
-          username: ${GIT_USERNAME}       # o tu email de GitHub
-          password: ${GIT_TOKEN}          # token personal de GitHub
+          uri: git@github-config:ROGER-SAN-FER/config-repo.git
+          default-label: master
+          ignore-local-ssh-settings: false
+#          #Estas credenciales son cuando no uso SSH y la uri es http
+#          username: ${GIT_USERNAME}       # o tu email de GitHub
+#          password: ${GIT_TOKEN}          # token personal de GitHub
 
+encrypt:
+  key-store:
+    location: file:${KEYSTORE_LOCATION}
+    password: ${KEYSTORE_PASS}
+    alias: ${KEY_ALIAS}
+    secret: ${KEY_PASS}
 management:
   endpoints.web.exposure.include: health,info
