@@ -27,7 +27,7 @@ public class PedidoService {
     public PedidoView consultarPedido(Long pedidoId, Long productoId) {
         ProductDto producto = productosClient.getProductoById(productoId);
         // ✳️ En real: cargarías el pedido de tu BD. Aquí simulamos:
-        return new PedidoView(pedidoId, producto.getId(), producto.getNombre(), producto.getPrecio());
+        return new PedidoView(pedidoId, producto.getId(), producto.getName(), producto.getPrice());
     }
 
     // Se ejecuta cuando el circuito está ABIERTO (CallNotPermittedException),

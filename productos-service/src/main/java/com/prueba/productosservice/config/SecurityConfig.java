@@ -1,5 +1,6 @@
 package com.prueba.productosservice.config;
 
+import jakarta.ws.rs.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -24,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Podrías abrir health-checks
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
                         // todo lo demás requiere JWT válido
                         .anyRequest().authenticated()
                 )

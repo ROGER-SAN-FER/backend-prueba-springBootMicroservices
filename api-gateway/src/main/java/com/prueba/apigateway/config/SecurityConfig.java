@@ -23,6 +23,8 @@ public class SecurityConfig {
                         .pathMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/refresh", "/api/auth/logout").permitAll()
                         .pathMatchers("/api/public/**").permitAll()
+                        .pathMatchers("/pedidos/**").permitAll()
+                        .pathMatchers("/productos/**").permitAll()
                         // todo lo demás requiere JWT válido
                         .anyExchange().authenticated()
                 )

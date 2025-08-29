@@ -1,5 +1,6 @@
 package com.prueba.productosservice.controller;
 
+import com.prueba.productosservice.dto.ProductDto;
 import com.prueba.productosservice.dto.ProductRequest;
 import com.prueba.productosservice.dto.ProductResponse;
 import com.prueba.productosservice.entity.ProductEntity;
@@ -9,14 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RefreshScope
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/productos")
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -36,8 +39,13 @@ public class ProductController {
                 .toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
+    public ProductResponse getById(@PathVariable Long id) {
+        return toResponse(productoService.findById(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}/admin")
     public ProductResponse findById(@PathVariable long id) {
         return toResponse(productoService.findById(id));
     }

@@ -11,5 +11,5 @@ import java.math.BigDecimal;
 public class ProductDto {
     private Long id;
     private String nombre;
-    private BigDecimal precio;
+    private BigDecimal price;
 }

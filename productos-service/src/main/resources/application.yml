@@ -4,8 +4,6 @@ spring:
   config:
     import: "optional:configserver:http://localhost:8888"
 
-spring.cloud.config.label: master   # <- que coincida con el server
-
 management:
   endpoints:
     web:

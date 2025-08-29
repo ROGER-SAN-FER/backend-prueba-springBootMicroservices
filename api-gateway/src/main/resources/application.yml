@@ -49,8 +49,8 @@ spring:
         - id: productos-route # Identificador interno de la ruta
           uri: lb://productos-service  # lb:// usa el Discovery Client (Eureka) + balanceo de carga
           predicates: # Condiciones que debe cumplir la request para redirigirse aqu�
-#            - Path=/productos/**         # Solo las rutas que empiecen con /productos/
-            - Path=/api/products/**
+            - Path=/productos/**         # Solo las rutas que empiecen con /productos/
+            - Path=/api/productos/**
             - Method=GET,POST, DELETE            # Solo si el metodo es GET o POST
           filters: # Filtros aplicados a ESTA ruta
             - StripPrefix=0              # No elimina prefijos de la URL entrante/ no recorta prefijos (aj�stalo si usas /api/**)

@@ -37,7 +37,7 @@
             <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
 
-        <!-- Para metricas -->
+        <!-- Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
