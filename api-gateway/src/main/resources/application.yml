@@ -34,22 +34,24 @@ spring:
       routes: # Definici�n de rutas en el Gateway
         # === Reenvía OAuth2 (inicio y callback) al auth-service ===
         - id: auth-oauth2
-          uri: lb://AUTH-SERVICE
+          uri: lb://auth-service
           predicates:
             - Path=/oauth2/**,/login/oauth2/**
 
         # === Reenvía login/refresh/logout (auth normal) y públicos del auth-service ===
         - id: auth-api
-          uri: lb://AUTH-SERVICE
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**,/api/public/**,/api/reports/**,/api/user/**
+            - Method=POST
 
         # === Ruta a PRODUCTOS-SERVICE ===
         - id: productos-route # Identificador interno de la ruta
-          uri: lb://PRODUCTOS-SERVICE  # lb:// usa el Discovery Client (Eureka) + balanceo de carga
+          uri: lb://productos-service  # lb:// usa el Discovery Client (Eureka) + balanceo de carga
           predicates: # Condiciones que debe cumplir la request para redirigirse aqu�
-            - Path=/productos/**         # Solo las rutas que empiecen con /productos/
-            - Method=GET,POST            # Solo si el metodo es GET o POST
+#            - Path=/productos/**         # Solo las rutas que empiecen con /productos/
+            - Path=/api/products/**
+            - Method=GET,POST, DELETE            # Solo si el metodo es GET o POST
           filters: # Filtros aplicados a ESTA ruta
             - StripPrefix=0              # No elimina prefijos de la URL entrante/ no recorta prefijos (aj�stalo si usas /api/**)
             - AddRequestHeader=X-From, api-gateway # A�ade header a la request enviada al servicio
@@ -58,9 +60,14 @@ spring:
 
         # === Ruta a PEDIDOS-SERVICE ===
         - id: pedidos-route
-          uri: lb://PEDIDOS-SERVICE
+          uri: lb://pedidos-service
           predicates:
             - Path=/pedidos/**
+            - Method=GET,POST, DELETE
+          filters:
+            - StripPrefix=0
+            - AddRequestHeader=X-From, api-gateway
+
 
     # Si a�ades circuit breaker en el gateway, puedes activar un fallback (opcional):
     # gateway:

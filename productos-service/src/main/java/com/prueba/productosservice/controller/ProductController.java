@@ -6,17 +6,28 @@ import com.prueba.productosservice.entity.ProductEntity;
 import com.prueba.productosservice.service.ProductoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RefreshScope
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductoService productoService;
+    @Value("${app.mensaje}")
+    private String mensaje;
+
+    @GetMapping("/mensaje")
+    public String getMensaje() {
+        return mensaje;
+    }
 
     @GetMapping
     public List<ProductResponse> findAll() {
@@ -25,6 +36,7 @@ public class ProductController {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ProductResponse findById(@PathVariable long id) {
         return toResponse(productoService.findById(id));

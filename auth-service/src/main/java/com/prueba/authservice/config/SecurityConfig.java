@@ -85,8 +85,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(auditDeniedHandler)       // 403 con auditoría
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll() // o .authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
                         .requestMatchers("/api/auth/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/*").hasRole("ADMIN")
