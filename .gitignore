@@ -7,3 +7,6 @@ target/
 
 # Logs
 *.log
+
+# Ignorar el archivo .env con credenciales de Grafana
+infra/observability/prometheus/.env
